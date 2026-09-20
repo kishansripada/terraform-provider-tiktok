@@ -465,3 +465,29 @@ func TestObjectMissingAndDeletedFailClosed(t *testing.T) {
 		})
 	}
 }
+
+func TestUnknownChildParentBlocksDeletion(t *testing.T) {
+	for _, kind := range []string{"adgroup", "smart_plus_adgroup"} {
+		t.Run(kind, func(t *testing.T) {
+			r, f := setupObject(t, kind)
+			f.row = objectFixture(kind)
+			f.row["adgroup_id"] = "200"
+			handler := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				if strings.HasSuffix(req.URL.Path, "/ad/get/") {
+					fmt.Fprint(w, `{"code":0,"data":{"list":[{"ad_id":"500","smart_plus_ad_id":"500"}],"page_info":{"total_page":1,"total_number":1}}}`)
+					return
+				}
+				f.serve(w, req)
+			}))
+			defer handler.Close()
+			r.client.base = handler.URL
+			r.client.http = handler.Client()
+			state := objectState(t, r, objectFixture(kind))
+			res := framework.DeleteResponse{State: state}
+			r.Delete(context.Background(), framework.DeleteRequest{State: state}, &res)
+			if !res.Diagnostics.HasError() || len(f.writes) != 0 {
+				t.Fatal("unknown child ownership allowed deletion")
+			}
+		})
+	}
+}

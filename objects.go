@@ -769,6 +769,10 @@ func (r *objectResource) Delete(ctx context.Context, req resource.DeleteRequest,
 					return
 				}
 				for _, child := range children {
+					if !deleted(child) && !validID(fmt.Sprint(child["adgroup_id"])) {
+						addError(&res.Diagnostics, fmt.Errorf("child response omits its parent identity; deletion blocked"))
+						return
+					}
 					if child["adgroup_id"] == id && !deleted(child) {
 						addError(&res.Diagnostics, fmt.Errorf("ad group has nondeleted children"))
 						return

@@ -320,6 +320,10 @@ func (r *campaignResource) Delete(ctx context.Context, req resource.DeleteReques
 				return
 			}
 			for _, child := range rows {
+				if !deleted(child) && !validID(fmt.Sprint(child["campaign_id"])) {
+					addError(&res.Diagnostics, fmt.Errorf("child response omits its campaign identity; deletion blocked"))
+					return
+				}
 				if child["campaign_id"] == id && !deleted(child) {
 					addError(&res.Diagnostics, fmt.Errorf("campaign has nondeleted children; deletion blocked"))
 					return
