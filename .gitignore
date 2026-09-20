@@ -1,0 +1,15 @@
+.terraform/
+**/.terraform/
+.terraform.lock.hcl
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+.env
+.env.*
+terraform-provider-tiktok
+coverage.out
+crash.log
+crash.*.log

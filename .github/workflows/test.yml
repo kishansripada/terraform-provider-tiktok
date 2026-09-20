@@ -1,0 +1,35 @@
+name: Test
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.7
+          terraform_wrapper: false
+      - run: test -z "$(gofmt -l .)"
+      - run: go vet ./...
+      - run: go test -race ./...
+        env:
+          TF_ACC: '1'
+      - run: bash build.sh
+      - run: terraform fmt -check -recursive examples
+      - run: terraform -chdir=examples/basic init -backend=false -input=false
+        env:
+          TF_CLI_CONFIG_FILE: ${{ github.workspace }}/.terraform/install.tfrc
+      - run: terraform -chdir=examples/basic validate
+        env:
+          TF_CLI_CONFIG_FILE: ${{ github.workspace }}/.terraform/install.tfrc

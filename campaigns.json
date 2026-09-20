@@ -1,0 +1,420 @@
+{
+  "campaign_create": {
+    "properties": {
+      "advertiser_id": {
+        "description": "Advertiser ID.",
+        "type": "string"
+      },
+      "app_id": {
+        "description": "Required when `campaign_type=IOS14_CAMPAIGN` and either `objective_type=PRODUCT_SALES`, or `objective_type=APP_PROMOTION` with `app_promotion_type=APP_INSTALL`. Application ID of the promoted app. You cannot use an app that has not activated the SAN module on your MMP to create iOS Dedicated Campaigns.",
+        "type": "string"
+      },
+      "app_promotion_type": {
+        "description": "Required when `objective_type` is `APP_PROMOTION`. App promotion type. `APP_INSTALL` gets new users to install your app and can be used in an iOS14 Dedicated Campaign. `APP_RETARGETING` re-engages existing users and cannot be used in an iOS14 Dedicated Campaign. `APP_PREREGISTRATION` gets new users to pre-register before launch and also cannot be used in an iOS14 Dedicated Campaign. App Pre-Registration is allowlist-only.",
+        "enum": [
+          "APP_INSTALL",
+          "APP_RETARGETING",
+          "APP_PREREGISTRATION"
+        ],
+        "type": "string"
+      },
+      "budget": {
+        "description": "Required when `budget_mode` is `BUDGET_MODE_DAY`, `BUDGET_MODE_DYNAMIC_DAILY_BUDGET`, or `BUDGET_MODE_TOTAL`. Campaign budget.",
+        "format": "double",
+        "type": "number"
+      },
+      "budget_mode": {
+        "description": "Required when `objective_type` is not `RF_REACH`. When `objective_type=RF_REACH`, only `BUDGET_MODE_INFINITE` is supported. If `budget_optimize_on=true`, supported values are `BUDGET_MODE_TOTAL`, `BUDGET_MODE_DYNAMIC_DAILY_BUDGET`, and `BUDGET_MODE_DAY`. `BUDGET_MODE_DYNAMIC_DAILY_BUDGET` is the average daily budget over a week; daily costs do not exceed 125% of the average daily budget and weekly costs do not exceed average daily budget × 7. When `objective_type` is `TRAFFIC`, `APP_PROMOTION`, `WEB_CONVERSIONS`, `LEAD_GENERATION`, `PRODUCT_SALES` (Video Shopping Ads only), `REACH`, `VIDEO_VIEWS`, or `ENGAGEMENT`, use `BUDGET_MODE_DYNAMIC_DAILY_BUDGET` for a non-lifetime budget. Dynamic daily budget for `REACH`, `VIDEO_VIEWS`, and `ENGAGEMENT` is allowlist-only. If `budget_optimize_on` is not enabled, supported values are `BUDGET_MODE_INFINITE`, `BUDGET_MODE_TOTAL`, and `BUDGET_MODE_DAY`; for non-CBO campaigns, `BUDGET_MODE_DAY` is deprecated for `REACH`, `VIDEO_VIEWS`, and `ENGAGEMENT`.",
+        "enum": [
+          "BUDGET_MODE_INFINITE",
+          "BUDGET_MODE_TOTAL",
+          "BUDGET_MODE_DYNAMIC_DAILY_BUDGET",
+          "BUDGET_MODE_DAY"
+        ],
+        "type": "string"
+      },
+      "budget_optimize_on": {
+        "description": "Whether to enable Campaign Budget Optimization (CBO). Supported value: `true`. CBO for Video Shopping Ads with product source `CATALOG` is allowlist-only.",
+        "type": "boolean"
+      },
+      "campaign_app_profile_page_state": {
+        "description": "Whether to use App Profile Page to optimize delivery. Valid only when `objective_type=APP_PROMOTION` and the campaign is an iOS14 Dedicated Campaign; otherwise an error occurs. Default: `OFF`.",
+        "enum": [
+          "ON",
+          "OFF"
+        ],
+        "type": "string"
+      },
+      "campaign_name": {
+        "description": "Campaign name. Maximum 512 characters. Emoji is not supported. Each Chinese or Japanese word counts as two characters; each English letter counts as one character.",
+        "type": "string"
+      },
+      "campaign_product_source": {
+        "description": "Required when `objective_type=PRODUCT_SALES`. Product source of the campaign. `CATALOG` uses catalog. `STORE` uses TikTok Shop or TikTok Showcase. Product Sales is allowlist-only. For Video Shopping Ads, this setting determines allowed ad-group `product_source`: if `CATALOG`, ad groups must use `CATALOG`; if `STORE`, ad groups must use `STORE` or `SHOWCASE`.",
+        "enum": [
+          "CATALOG",
+          "STORE"
+        ],
+        "type": "string"
+      },
+      "campaign_type": {
+        "description": "Campaign type. `IOS14_CAMPAIGN` supports `objective_type=PRODUCT_SALES` and `objective_type=APP_PROMOTION` only when `app_promotion_type=APP_INSTALL`. If `app_promotion_type` is `APP_RETARGETING` or `APP_PREREGISTRATION`, `campaign_type` can only be `REGULAR_CAMPAIGN`. For iOS Dedicated Campaigns with other objectives, use `REGULAR_CAMPAIGN`.",
+        "enum": [
+          "REGULAR_CAMPAIGN",
+          "IOS14_CAMPAIGN"
+        ],
+        "type": "string"
+      },
+      "catalog_enabled": {
+        "description": "Whether to use your catalog to automatically advertise relevant products or services. Supported values: `true`, `false`. Default: `false`. Set to `true` only for Automotive Ads for Inventory or Automotive Ads for Models. If `objective_type=PRODUCT_SALES` and `campaign_product_source=CATALOG`, this field is overwritten to `true`. Once set, this field cannot be updated.",
+        "type": "boolean"
+      },
+      "disable_skan_campaign": {
+        "description": "Valid only when all of the following are true: `objective_type=APP_PROMOTION`, `app_promotion_type=APP_INSTALL`, `campaign_type=IOS14_CAMPAIGN`, and `app_id` is an eligible iOS app whose `/app/list/` result has `advanced_dedicated_campaign_allowed`. `true` disables SKAN attribution, removes Dedicated Campaign quota limits, and enables SAN metrics but not SKAN reporting metrics; for an app eligible for Advanced Dedicated Campaigns, you must enable SKAN attribution or Advanced Dedicated Campaign or both, so you cannot disable SKAN attribution and Advanced Dedicated Campaign simultaneously. `false` enables SKAN attribution, applies Dedicated Campaign quota limits, and enables SKAN metrics; if `is_advanced_dedicated_campaign=true` at the same time, both SAN and SKAN reporting metrics are available. Disabling SKAN attribution for Dedicated Campaigns is allowlist-only. If you are allowlisted for disabling SKAN attribution for Dedicated Campaigns, you cannot set ad-group-level `bid_type` to `BID_TYPE_CUSTOM` when `is_advanced_dedicated_campaign=false`, `disable_skan_campaign=false`, and ad-group-level `optimization_goal` is `INSTALL` or `IN_APP_EVENT`. Once set, this field cannot be updated.",
+        "type": "boolean"
+      },
+      "is_advanced_dedicated_campaign": {
+        "description": "Whether the campaign is an Advanced Dedicated Campaign. Supported values: `true`, `false`. Default: `false`. Once set, this field cannot be updated.",
+        "type": "boolean"
+      },
+      "is_search_campaign": {
+        "description": "Whether to create a Search Ads Campaign. Supported values: `true`, `false`. Search Ads Campaigns are allowlist-only. Once set, this field cannot be updated.",
+        "type": "boolean"
+      },
+      "objective_type": {
+        "description": "Advertising objective.",
+        "type": "string"
+      },
+      "operation_status": {
+        "description": "Status of the campaign when created. Default: `ENABLE`. For Reach & Frequency campaigns, set `operation_status` to `ENABLE` or omit it; do not set `DISABLE`. To update campaign status after creation, use `/campaign/status/update/`.",
+        "enum": [
+          "ENABLE",
+          "DISABLE"
+        ],
+        "type": "string"
+      },
+      "po_number": {
+        "description": "PO number for invoice tracking and reconciliation.",
+        "type": "string"
+      },
+      "postback_window_mode": {
+        "description": "Valid only when `campaign_type=IOS14_CAMPAIGN` and `operation_status=DISABLE`. You can set this when creating a disabled campaign or when disabling an existing campaign through `/campaign/status/update/`; the recommended practice is to set it when disabling an existing campaign. `POSTBACK_WINDOW_MODE1` secures the first SKAN 4.0 postback (0-2 day attribution window) and releases quota after up to 4 days. `POSTBACK_WINDOW_MODE2` secures the first two postbacks (3-7 day attribution window) and releases quota after up to 13 days. `POSTBACK_WINDOW_MODE3` secures all three postbacks (8-35 day attribution window) and releases quota after up to 41 days. Once set, this field cannot be updated. If `operation_status=ENABLE` or is omitted, this field is ignored. If passed when SKAN 4.0 is not enabled for the app in `app_id`, an error occurs. If omitted while `campaign_type=IOS14_CAMPAIGN`, `operation_status=DISABLE`, and SKAN 4.0 is enabled for the app, it defaults to `POSTBACK_WINDOW_MODE1`. If SKAN 4.0 is enabled for your app, target iOS 16.1+ devices at the ad group level by setting `min_ios_version` to `16.1` to receive SKAN 4.0 postbacks.",
+        "enum": [
+          "POSTBACK_WINDOW_MODE1",
+          "POSTBACK_WINDOW_MODE2",
+          "POSTBACK_WINDOW_MODE3"
+        ],
+        "type": "string"
+      },
+      "request_id": {
+        "description": "Request ID that lets you create campaigns with duplicate names and provides idempotency. To create campaigns with the same `campaign_name`, send different `request_id` values. If you retry the same request with the same `request_id` within 10 seconds, only one request succeeds. This is different from the response `request_id`, which uniquely identifies an HTTP request. Must be a string representation of a 64-bit integer, for example `123456789`.",
+        "type": "string"
+      },
+      "rf_campaign_type": {
+        "description": "Use only when `objective_type=RF_REACH`; do not pass this field otherwise. `STANDARD` creates a standard Reach & Frequency campaign. `PULSE` creates a TikTok Pulse campaign and is allowlist-only. This field cannot be updated after creation. If `rf_campaign_type=PULSE`, then `/adgroup/rf/create/` must use `contextual_tag_ids` of `PREMIUM` type, ad group CPM is fixed, `feed_type` in `/adgroup/rf/create/` cannot be `TOP_FEED`, and targeting locations cannot be updated in `/adgroup/rf/update/`.",
+        "enum": [
+          "STANDARD",
+          "PULSE"
+        ],
+        "type": "string"
+      },
+      "rta_bid_enabled": {
+        "description": "Whether to use RTA bid. Supported values: `true`, `false`. Default: `false`. You can set this to `true` only when `objective_type` is `APP_PROMOTION`, `WEB_CONVERSIONS`, or `PRODUCT_SALES`, and `rta_id` is passed. This feature is allowlist-only.",
+        "type": "boolean"
+      },
+      "rta_id": {
+        "description": "Realtime API (RTA) ID, the RTA strategy identifier. This feature is allowlist-only and requires onboarding before your system can receive and respond to RTA requests.",
+        "type": "string"
+      },
+      "rta_product_selection_enabled": {
+        "description": "Whether to use RTA to automatically select products. Supported values: `true`, `false`. Default: `false`. You can set this to `true` only when `objective_type=PRODUCT_SALES`, `campaign_product_source=CATALOG`, and `rta_id` is passed.",
+        "type": "boolean"
+      },
+      "sales_destination": {
+        "description": "Required and valid only when `virtual_objective_type` is specified. Sales destination. `TIKTOK_SHOP` drives sales on TikTok Shop. `WEBSITE` drives sales on your website. `APP` drives sales in your app and requires a product catalog. `WEB_AND_APP` drives sales on both website and app; this Website and App Optimization option is allowlist-only.",
+        "enum": [
+          "TIKTOK_SHOP",
+          "WEBSITE",
+          "APP",
+          "WEB_AND_APP"
+        ],
+        "type": "string"
+      },
+      "special_industries": {
+        "description": "Special ad categories. Selecting one certifies compliance with TikTok's special ad category policy and limits ad-group-level targeting options for anti-discrimination compliance. `HOUSING` is for housing-related opportunities. `EMPLOYMENT` is for jobs and related opportunities. `CREDIT` is for credit and financing opportunities. Using special ad categories in Shopping Ads with catalog product source and with non-catalog product source are separate allowlist-only features. This field is generally available to advertisers registered in America or Canada; advertisers not registered there but targeting those countries need an additional allowlist. Once selected for a campaign, special ad categories can be removed, but you cannot change them, and you cannot enable them for an existing campaign if they are currently disabled.",
+        "items": {
+          "enum": [
+            "HOUSING",
+            "EMPLOYMENT",
+            "CREDIT"
+          ],
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "virtual_objective_type": {
+        "description": "New objective type. Use `SALES` to create a campaign with the Sales objective, which combines Website Conversions and Product Sales objectives.",
+        "enum": [
+          "SALES"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "advertiser_id",
+      "objective_type",
+      "campaign_name"
+    ],
+    "type": "object"
+  },
+  "campaign_update": {
+    "properties": {
+      "advertiser_id": {
+        "description": "Advertiser ID.",
+        "type": "string"
+      },
+      "budget": {
+        "description": "Campaign budget. The new budget must be at least 105% of the current spend. To determine current spend, use the Basic data metric `spend` from the synchronous report or asynchronous report API.",
+        "format": "double",
+        "type": "number"
+      },
+      "campaign_id": {
+        "description": "Campaign ID.",
+        "type": "string"
+      },
+      "campaign_name": {
+        "description": "Campaign name. Maximum length is 512 characters. Emoji is not supported. Each Chinese or Japanese character counts as two characters; each English letter counts as one character.",
+        "type": "string"
+      },
+      "po_number": {
+        "description": "PO (purchase order) number used for invoice tracking and reconciliation.",
+        "type": "string"
+      },
+      "special_industries": {
+        "description": "Special ad categories for the campaign. Setting this field means the campaign promotes housing, employment, or credit opportunities and must comply with TikTok's special ad category policy; ad group targeting options in the campaign will be restricted accordingly. Enum values: `HOUSING` (real estate listings, homeowners insurance, mortgage loans, or similar opportunities), `EMPLOYMENT` (job offers, internships, professional certification programs, or similar opportunities), `CREDIT` (credit card offers, auto loans, long-term financing, or similar opportunities). Important update rule: if special ad categories are already selected for a campaign, you can remove them, but you cannot change them; if special ad categories are currently disabled, you cannot enable them for an existing campaign. For Shopping Ads, use of special ad categories with campaign product source as Catalog and with non-Catalog campaign product source are separate allowlist-only features. This field is generally available to advertisers registered in America or Canada; advertisers not registered in America or Canada who want to target these countries with special ad categories must apply for an additional allowlist.",
+        "items": {
+          "enum": [
+            "HOUSING",
+            "EMPLOYMENT",
+            "CREDIT"
+          ],
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "advertiser_id",
+      "campaign_id"
+    ],
+    "type": "object"
+  },
+  "smart_plus_campaign_create": {
+    "properties": {
+      "advertiser_id": {
+        "description": "Advertiser ID.",
+        "type": "string"
+      },
+      "app_id": {
+        "description": "Required when both conditions are met: (`objective_type=APP_PROMOTION` and `app_promotion_type=APP_INSTALL`) or (`objective_type=WEB_CONVERSIONS` and `sales_destination=APP`); and `campaign_type=IOS14_CAMPAIGN`. App ID of the app to promote. For iOS Dedicated Campaigns, you cannot use an app that has not activated the SAN module on your MMP.",
+        "type": "string"
+      },
+      "app_promotion_type": {
+        "description": "Required when `objective_type` is `APP_PROMOTION`. `APP_INSTALL` is for acquiring new app installs; `APP_RETARGETING` is for re-engaging existing app users; `MINIS` is for TikTok Minis or Series promotion. Additional dependencies apply: if `app_promotion_type` is `APP_INSTALL` and `campaign_type` is `IOS14_CAMPAIGN`, `app_id` is required; `gaming_ad_compliance_agreement` is valid only when `objective_type=APP_PROMOTION`, `app_promotion_type=APP_INSTALL`, and `campaign_type=IOS14_CAMPAIGN`; `budget_auto_adjust_strategy` is valid only when `app_promotion_type` is not `MINIS`.",
+        "enum": [
+          "APP_INSTALL",
+          "APP_RETARGETING",
+          "MINIS"
+        ],
+        "type": "string"
+      },
+      "budget": {
+        "description": "Required when `budget_mode` is `BUDGET_MODE_DYNAMIC_DAILY_BUDGET`, `BUDGET_MODE_TOTAL`, or `BUDGET_MODE_DAY`. When `budget_optimize_on` is `true` or omitted, this is the fixed campaign budget or initial campaign budget: if `budget_auto_adjust_strategy=UNSET`, it is the fixed campaign budget; if `budget_auto_adjust_strategy=AUTO_BUDGET_INCREASE`, it is the initial campaign budget. When `budget_optimize_on` is `false`, this is the limit for all ad groups under the campaign: daily when `budget_mode=BUDGET_MODE_DAY`, or lifetime when `budget_mode=BUDGET_MODE_TOTAL`.",
+        "format": "double",
+        "type": "number"
+      },
+      "budget_auto_adjust_strategy": {
+        "description": "Valid only when all of the following are true: `budget_optimize_on` is `true` or omitted, `budget_mode=BUDGET_MODE_DYNAMIC_DAILY_BUDGET`, and `app_promotion_type` is not `MINIS`. `AUTO_BUDGET_INCREASE` enables Goal-based budget increase. When set, the specified `budget` is the initial daily budget and may automatically increase by 20%, up to 10 times per day, when budget utilization reaches 90% or more; the daily budget resets to the original daily budget each day. This is an allowlist-only feature.",
+        "enum": [
+          "AUTO_BUDGET_INCREASE"
+        ],
+        "type": "string"
+      },
+      "budget_mode": {
+        "description": "Budget mode. When `budget_optimize_on` is `true` or omitted, valid values are `BUDGET_MODE_DYNAMIC_DAILY_BUDGET` and `BUDGET_MODE_TOTAL`; default is `BUDGET_MODE_DYNAMIC_DAILY_BUDGET`. When `budget_optimize_on` is `false`, valid values are `BUDGET_MODE_INFINITE`, `BUDGET_MODE_DAY`, and `BUDGET_MODE_TOTAL`; default is `BUDGET_MODE_INFINITE`. `budget` is required when `budget_mode` is `BUDGET_MODE_DYNAMIC_DAILY_BUDGET`, `BUDGET_MODE_TOTAL`, or `BUDGET_MODE_DAY`. Once set, this field cannot be updated.",
+        "enum": [
+          "BUDGET_MODE_DYNAMIC_DAILY_BUDGET",
+          "BUDGET_MODE_TOTAL",
+          "BUDGET_MODE_INFINITE",
+          "BUDGET_MODE_DAY"
+        ],
+        "type": "string"
+      },
+      "budget_optimize_on": {
+        "description": "Whether to enable Campaign Budget Optimization (CBO). Supported values: `true`, `false`. Default is `true`. This setting affects `budget_mode` and `budget`: when `budget_optimize_on` is `true` or omitted, `budget_mode` controls campaign budget mode; when `false`, `budget_mode` controls the fixed limit for the total budget of all ad groups under the campaign.",
+        "type": "boolean"
+      },
+      "campaign_app_profile_page_state": {
+        "description": "Whether to use an App Profile Page to optimize delivery. Default is `OFF`. You can use this field only when `objective_type` is `APP_PROMOTION` and the campaign is an iOS 14 Dedicated Campaign; otherwise an error occurs. When set to `ON`, pass the `page_id` of an App Profile Page.",
+        "enum": [
+          "ON",
+          "OFF"
+        ],
+        "type": "string"
+      },
+      "campaign_name": {
+        "description": "Campaign name. Maximum length is 512 characters. Emoji is not supported. Each Chinese or Japanese word counts as two characters; each English letter counts as one character.",
+        "type": "string"
+      },
+      "campaign_type": {
+        "description": "Campaign type. Default is `REGULAR_CAMPAIGN`. When `campaign_type` is `IOS14_CAMPAIGN`, additional fields may become required or valid, including `app_id`, `gaming_ad_compliance_agreement`, `campaign_app_profile_page_state`, `disable_skan_campaign`, and `postback_window_mode`.",
+        "enum": [
+          "REGULAR_CAMPAIGN",
+          "IOS14_CAMPAIGN"
+        ],
+        "type": "string"
+      },
+      "catalog_enabled": {
+        "description": "Valid only when `objective_type` is `WEB_CONVERSIONS` or `LEAD_GENERATION`. Whether to use a catalog in the campaign. Supported values: `true`, `false`. When `objective_type` is `WEB_CONVERSIONS` and `catalog_enabled` is `true`, `catalog_type` is required. When `sales_destination` is `APP`, set this field to `true`.",
+        "type": "boolean"
+      },
+      "catalog_type": {
+        "description": "Required when `objective_type` is `WEB_CONVERSIONS` and `catalog_enabled` is `true`. Catalog type. When `sales_destination` is `APP`, set `catalog_type` to `ECOMMERCE` or `TRAVEL_ENTERTAINMENT`. `MINI_SERIES` is supported but Create Upgraded Smart+ Mini Series Catalog Ads is currently allowlist-only.",
+        "enum": [
+          "ECOMMERCE",
+          "TRAVEL_ENTERTAINMENT",
+          "MINI_SERIES"
+        ],
+        "type": "string"
+      },
+      "disable_skan_campaign": {
+        "description": "Valid only when all of the following are true: (`objective_type=APP_PROMOTION` and `app_promotion_type=APP_INSTALL`) or (`objective_type=WEB_CONVERSIONS` and `sales_destination=APP`); `campaign_type=IOS14_CAMPAIGN`; and `app_id` refers to an iOS app eligible for Advanced Dedicated Campaigns. `true` disables SKAN attribution, removes Dedicated Campaign quota limits, and allows SAN metrics but not SKAN reporting metrics. `false` enables SKAN attribution, applies Dedicated Campaign quota limits, and allows SKAN metrics; if `is_advanced_dedicated_campaign=true` simultaneously, both SAN and SKAN reporting metrics are available. For an app eligible for Advanced Dedicated Campaigns, you must enable SKAN attribution or Advanced Dedicated Campaign or both; you cannot disable both simultaneously. This is an allowlist-only feature. Also, if you are allowlisted for disabling SKAN attribution, you cannot set `bid_type` to `BID_TYPE_CUSTOM` when `is_advanced_dedicated_campaign=false`, `disable_skan_campaign=false`, and `optimization_goal` is `INSTALL` or `IN_APP_EVENT`.",
+        "type": "boolean"
+      },
+      "gaming_ad_compliance_agreement": {
+        "description": "Valid only when all of the following are true: `objective_type=APP_PROMOTION`, `app_promotion_type=APP_INSTALL`, and `campaign_type=IOS14_CAMPAIGN`. Whether to agree to the Compliance Assurance Policy for Gaming Advertisers on TikTok. `ON` agrees to the policy; `OFF` does not. Default is `OFF`. This feature is allowlist-only.",
+        "enum": [
+          "ON",
+          "OFF"
+        ],
+        "type": "string"
+      },
+      "is_promotional_campaign": {
+        "description": "Valid only when `objective_type` is `WEB_CONVERSIONS`. Enables promotion campaign settings for theatrical releases and streaming service promotions. Supported values: `true`, `false`. Default is `false`. This is an allowlist-only feature, and once set, this field cannot be updated.",
+        "type": "boolean"
+      },
+      "objective_type": {
+        "description": "Advertising objective. Use `APP_PROMOTION`, `WEB_CONVERSIONS`, or `LEAD_GENERATION`. This value determines whether companion fields are required: `APP_PROMOTION` requires `app_promotion_type`; `WEB_CONVERSIONS` requires `sales_destination`; `catalog_enabled` is valid only for `WEB_CONVERSIONS` or `LEAD_GENERATION`.",
+        "enum": [
+          "APP_PROMOTION",
+          "WEB_CONVERSIONS",
+          "LEAD_GENERATION"
+        ],
+        "type": "string"
+      },
+      "operation_status": {
+        "description": "Status to apply when the campaign is created. Default is `ENABLE`.",
+        "enum": [
+          "ENABLE",
+          "DISABLE"
+        ],
+        "type": "string"
+      },
+      "po_number": {
+        "description": "PO (purchase order) number for invoice tracking and reconciliation.",
+        "type": "string"
+      },
+      "postback_window_mode": {
+        "description": "Valid only when `campaign_type=IOS14_CAMPAIGN` and `operation_status=DISABLE`. You can set this field when creating a disabled campaign or when disabling an existing campaign with `/smart_plus/campaign/status/update/`; the recommended practice is to specify it when disabling an existing campaign. It determines which SKAN 4.0 postback window to secure. Once set, this field cannot be updated. If `operation_status=ENABLE` or is omitted, this field is ignored. If provided when SKAN 4.0 is not enabled for `app_id`, an error occurs. If omitted while `campaign_type=IOS14_CAMPAIGN`, `operation_status=DISABLE`, and SKAN 4.0 is enabled for the app, it defaults to `POSTBACK_WINDOW_MODE1`. If SKAN 4.0 is enabled for the app, target iOS 16.1+ devices at the ad group level by setting `min_ios_version` to `16.1`.",
+        "enum": [
+          "POSTBACK_WINDOW_MODE1",
+          "POSTBACK_WINDOW_MODE2",
+          "POSTBACK_WINDOW_MODE3"
+        ],
+        "type": "string"
+      },
+      "request_id": {
+        "description": "Client-supplied request ID used for idempotency and to allow campaigns with duplicate names. If you retry the same request with the same `request_id`, only one request succeeds. This is different from the response `request_id`, which identifies the HTTP request. Must be a string representation of a 64-bit integer, for example `123456789`.",
+        "type": "string"
+      },
+      "rta_bid_enabled": {
+        "description": "Whether to use RTA bid. Supported values: `true`, `false`. Default is `false`. You can set this field to `true` only in either of these scenarios: (1) `objective_type=WEB_CONVERSIONS`, `sales_destination=APP`, and `rta_id` is passed; or (2) `objective_type=APP_PROMOTION`, `app_promotion_type=APP_RETARGETING`, and `rta_id` is passed. This is an allowlist-only feature. Once set, this field cannot be updated.",
+        "type": "boolean"
+      },
+      "rta_id": {
+        "description": "Realtime API (RTA) strategy identifier. RTA lets you integrate real-time audience data to customize auction and targeting. This is an allowlist-only feature and requires onboarding to receive and respond to RTA requests. Once set, this field cannot be updated.",
+        "type": "string"
+      },
+      "rta_product_selection_enabled": {
+        "description": "Whether to use RTA to automatically select products. Supported values: `true`, `false`. Default is `false`. You can set this field to `true` only when `objective_type=WEB_CONVERSIONS`, `sales_destination=APP`, and `rta_id` is specified. Once set, this field cannot be updated. When `rta_product_selection_enabled=true`, you can only set `product_specific_type` to `ALL` at the ad level.",
+        "type": "boolean"
+      },
+      "sales_destination": {
+        "description": "Required when `objective_type` is `WEB_CONVERSIONS`. `WEBSITE` drives sales on your website. `APP` drives sales in your app and requires `catalog_enabled=true` plus `catalog_type` set to `ECOMMERCE` or `TRAVEL_ENTERTAINMENT`; if `campaign_type` is `IOS14_CAMPAIGN`, `app_id` is also required. When `sales_destination` is `APP`, the allowed ad-group `catalog_id` types depend on `rta_id`: if `rta_id` is not specified, ad group `catalog_id` may reference catalogs with type `ECOM`, `HOTEL`, `FLIGHT`, `DESTINATION`, or `ENTERTAINMENT`; if `rta_id` is specified, ad group `catalog_id` may reference catalogs with type `ECOM` or `ENTERTAINMENT`. `WEB_AND_APP` drives sales on both website and app. Once set, this field cannot be updated.",
+        "enum": [
+          "WEBSITE",
+          "APP",
+          "WEB_AND_APP"
+        ],
+        "type": "string"
+      },
+      "special_industries": {
+        "description": "Ad categories. Once specified, the system adjusts targeting options to help comply with advertising policies. Supported only for advertisers registered in the US or Canada.",
+        "items": {
+          "enum": [
+            "HOUSING",
+            "EMPLOYMENT",
+            "CREDIT"
+          ],
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "advertiser_id",
+      "request_id",
+      "objective_type",
+      "campaign_name"
+    ],
+    "type": "object"
+  },
+  "smart_plus_campaign_update": {
+    "properties": {
+      "advertiser_id": {
+        "description": "Advertiser ID.",
+        "type": "string"
+      },
+      "budget": {
+        "description": "Fixed campaign budget or initial campaign budget. When `budget_auto_adjust_strategy=UNSET`, this is the fixed campaign budget. When `budget_auto_adjust_strategy=AUTO_BUDGET_INCREASE`, this is the initial campaign budget; to retrieve the current campaign budget, check the returned `current_budget`.",
+        "format": "double",
+        "type": "number"
+      },
+      "budget_auto_adjust_strategy": {
+        "description": "Campaign budget strategy for automatic daily campaign budget. Valid only when all of the following are true: `budget_optimize_on=true`, `budget_mode=BUDGET_MODE_DYNAMIC_DAILY_BUDGET`, and `app_promotion_type` is not `MINIS`. When set to `AUTO_BUDGET_INCREASE`, Goal-based budget increase is enabled; the specified `budget` becomes the initial daily budget, and the daily budget can automatically increase by 20%, up to 10 times per day, when budget utilization reaches 90% or more. The daily budget resets to the original daily budget each day. `UNSET` disables Goal-based budget increase. This feature is allowlist-only; contact your TikTok representative for access.",
+        "enum": [
+          "AUTO_BUDGET_INCREASE",
+          "UNSET"
+        ],
+        "type": "string"
+      },
+      "campaign_id": {
+        "description": "Campaign ID to update. To obtain valid campaign IDs, use `/smart_plus/campaign/get/`.",
+        "type": "string"
+      },
+      "campaign_name": {
+        "description": "Campaign name. Maximum length is 512 characters. Emoji is not supported. Each Chinese or Japanese word counts as two characters, and each English letter counts as one character.",
+        "type": "string"
+      },
+      "po_number": {
+        "description": "PO (purchase order) number used for invoice tracking and reconciliation.",
+        "type": "string"
+      }
+    },
+    "required": [
+      "advertiser_id",
+      "campaign_id"
+    ],
+    "type": "object"
+  }
+}

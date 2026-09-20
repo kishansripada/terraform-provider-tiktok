@@ -1,0 +1,14 @@
+TikTok is a trademark of its respective owner. This is an independent project.
+
+campaigns.json and spec/operations.json contain field metadata and descriptions
+from the TikTok Ads official MCP tool_get inputSchema and endpoint documentation,
+retrieved 2026-09-12 for Marketing API v1.3. The source snapshot includes only the
+four campaign create/update operations used by this provider and records a
+SHA-256 of the original broader snapshot. No TikTok SDK code is included.
+
+Official API documentation: https://business-api.tiktok.com/portal/docs
+Official SDK: https://github.com/tiktok/tiktok-business-api-sdk
+
+The MIT license covers this project's original code; it does not grant rights
+to TikTok trademarks or supersede terms applicable to upstream documentation
+or access to TikTok services.
