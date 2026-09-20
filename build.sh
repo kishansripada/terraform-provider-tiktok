@@ -3,10 +3,10 @@ set -euo pipefail
 
 provider_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 platform="$(go env GOOS)_$(go env GOARCH)"
-plugin_dir="$provider_dir/.terraform/plugins/registry.terraform.io/singingbuddy/tiktok/0.2.0/$platform"
+plugin_dir="$provider_dir/.terraform/plugins/registry.terraform.io/singingbuddy/tiktok/0.3.0/$platform"
 mkdir -p "$plugin_dir"
 cd "$provider_dir"
-CGO_ENABLED=0 go build -trimpath -buildvcs=false -o "$plugin_dir/terraform-provider-tiktok_v0.2.0" .
+CGO_ENABLED=0 go build -trimpath -buildvcs=false -o "$plugin_dir/terraform-provider-tiktok_v0.3.0" .
 # This provider is installed from source. Terraform's development
 # override deliberately avoids stale release checksums between local builds.
 cat > "$provider_dir/.terraform/development.tfrc" <<EOF

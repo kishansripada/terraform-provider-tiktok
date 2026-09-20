@@ -13,7 +13,6 @@ The MIT license covers this project's original code; it does not grant rights
 to TikTok trademarks or supersede terms applicable to upstream documentation
 or access to TikTok services.
 
-objects.json, queries.json, and spec/catalog.json additionally include official
-MCP input schemas retrieved 2026-09-20. spec/routes.json records route metadata
-from TikTok's official SDK at commit f809c396520df2d7b201a9ccc5378d822b728ed3.
+objects.json and spec/catalog.json additionally include official
+MCP input schemas retrieved 2026-09-20.
 No SDK runtime code is bundled.
