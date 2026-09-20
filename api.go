@@ -25,20 +25,24 @@ type apiClient struct {
 }
 
 func (c *apiClient) call(ctx context.Context, operation string, params map[string]any) (map[string]any, error) {
-	if c.token == "" {
-		return nil, fmt.Errorf("TIKTOK_MARKETING_ACCESS_TOKEN is required")
-	}
 	method := "POST"
 	if strings.HasSuffix(operation, "_get") {
 		method = "GET"
 	}
-	if method == "POST" && !c.writes {
-		return nil, fmt.Errorf("writes disabled: set provider allow_writes to true")
-	}
 	operation = strings.Replace(operation, "smart_plus_", "smart+/", 1)
 	endpoint := strings.ReplaceAll(operation, "_", "/")
 	endpoint = strings.Replace(endpoint, "smart+/", "smart_plus/", 1)
-	u, err := url.Parse(c.base + "/open_api/v1.3/" + endpoint + "/")
+	return c.request(ctx, method, "/open_api/v1.3/"+endpoint+"/", params)
+}
+
+func (c *apiClient) request(ctx context.Context, method, endpoint string, params map[string]any) (map[string]any, error) {
+	if c.token == "" {
+		return nil, fmt.Errorf("TIKTOK_MARKETING_ACCESS_TOKEN is required")
+	}
+	if method != "GET" && !c.writes {
+		return nil, fmt.Errorf("writes disabled: set provider allow_writes to true")
+	}
+	u, err := url.Parse(c.base + endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -97,13 +101,17 @@ func (c *apiClient) call(ctx context.Context, operation string, params map[strin
 }
 
 func (c *apiClient) list(ctx context.Context, kind string, campaignID string) ([]map[string]any, error) {
+	filter := map[string]any{"primary_status": "STATUS_ALL"}
+	if campaignID != "" {
+		filter["campaign_ids"] = []string{campaignID}
+	}
+	return c.listFiltered(ctx, kind, filter)
+}
+
+func (c *apiClient) listFiltered(ctx context.Context, kind string, filter map[string]any) ([]map[string]any, error) {
 	var rows []map[string]any
 	seen := map[string]bool{}
 	for page := 1; page <= 10000; page++ {
-		filter := map[string]any{"primary_status": "STATUS_ALL"}
-		if campaignID != "" {
-			filter["campaign_ids"] = []string{campaignID}
-		}
 		data, err := c.call(ctx, kind+"_get", map[string]any{"advertiser_id": c.account, "filtering": filter, "page": page, "page_size": 100})
 		if err != nil {
 			return nil, err

@@ -18,7 +18,7 @@ type tiktokProvider struct{ testClient *apiClient }
 
 func newProvider() provider.Provider { return &tiktokProvider{} }
 func (*tiktokProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r *provider.MetadataResponse) {
-	r.TypeName, r.Version = "tiktok", "0.1.0"
+	r.TypeName, r.Version = "tiktok", "0.2.0"
 }
 func (*tiktokProvider) Schema(_ context.Context, _ provider.SchemaRequest, r *provider.SchemaResponse) {
 	r.Schema = schema.Schema{Attributes: map[string]schema.Attribute{
@@ -51,8 +51,12 @@ func (*tiktokProvider) Resources(context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		func() resource.Resource { return &campaignResource{kind: "campaign"} },
 		func() resource.Resource { return &campaignResource{kind: "smart_plus_campaign"} },
+		func() resource.Resource { return &objectResource{kind: "adgroup"} },
+		func() resource.Resource { return &objectResource{kind: "ad"} },
+		func() resource.Resource { return &objectResource{kind: "smart_plus_adgroup"} },
+		func() resource.Resource { return &objectResource{kind: "smart_plus_ad"} },
 	}
 }
 func (*tiktokProvider) DataSources(context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{func() datasource.DataSource { return &inventoryDataSource{} }}
+	return []func() datasource.DataSource{func() datasource.DataSource { return &inventoryDataSource{} }, func() datasource.DataSource { return &queryDataSource{} }}
 }

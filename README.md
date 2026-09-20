@@ -10,12 +10,17 @@ needed at runtime. This project is not affiliated with or endorsed by TikTok.
 | --- | --- |
 | `tiktok_campaign` | Manage regular auction campaigns |
 | `tiktok_smart_plus_campaign` | Manage Upgraded Smart+ campaigns |
+| `tiktok_adgroup` / `tiktok_ad` | Manage regular auction ad groups and individual ads |
+| `tiktok_smart_plus_adgroup` / `tiktok_smart_plus_ad` | Manage Upgraded Smart+ ad groups and ads |
+| `tiktok_query` | Read 104 verified GET operations: account info, assets, targeting, audiences, catalogs, reporting, and more |
 | `tiktok_inventory` | Read regular and Smart+ campaigns, ad groups, and ads |
 
-Ad groups and ads are read-only. Campaign attributes are native HCL fields derived
-from the pinned schemas in [campaigns.json](campaigns.json). The source snapshot
-in [spec/operations.json](spec/operations.json) records its provenance and retrieval
-date. These are MCP JSON input schemas, not a complete OpenAPI response contract.
+Fields are native HCL attributes, including nested targeting and creative objects.
+See the [complete coverage matrix](docs/coverage.md), [resource references](docs/resources),
+and [read-only query examples](docs/data-sources/query.md). Request contracts are
+pinned in `campaigns.json` and `objects.json`; provenance is retained in `spec/`.
+These are MCP input schemas plus verified SDK routes, not a complete OpenAPI response
+contract. Not all TikTok endpoints or conditional business rules are implemented.
 
 ## Install from Git
 
@@ -23,7 +28,7 @@ Requires Go 1.27.1 and Terraform 1.14 or newer (below 2.0). A C compiler is need
 for race-enabled development tests, but not for the provider build.
 
 ```sh
-git clone --branch v0.1.0 https://github.com/kishansripada/terraform-provider-tiktok.git
+git clone --branch v0.2.0 https://github.com/kishansripada/terraform-provider-tiktok.git
 cd terraform-provider-tiktok
 bash build.sh
 export TF_CLI_CONFIG_FILE="$PWD/.terraform/install.tfrc"
@@ -41,7 +46,7 @@ To pin it inside another Git project:
 
 ```sh
 git submodule add https://github.com/kishansripada/terraform-provider-tiktok.git vendor/terraform-provider-tiktok
-git -C vendor/terraform-provider-tiktok checkout v0.1.0
+git -C vendor/terraform-provider-tiktok checkout v0.2.0
 git add .gitmodules vendor/terraform-provider-tiktok
 bash vendor/terraform-provider-tiktok/build.sh
 export TF_CLI_CONFIG_FILE="$PWD/vendor/terraform-provider-tiktok/.terraform/install.tfrc"
@@ -65,7 +70,7 @@ terraform {
   required_providers {
     tiktok = {
       source  = "singingbuddy/tiktok"
-      version = "0.1.0"
+      version = "0.2.0"
     }
   }
 }
@@ -80,32 +85,41 @@ data "tiktok_inventory" "account" {}
 ```
 
 See [examples/basic/main.tf](examples/basic/main.tf) for a disabled campaign
-example. Review a plan before enabling writes. Import an existing campaign using
+and [examples/ads/main.tf](examples/ads/main.tf) for campaign → ad group → ad references. Review a plan before enabling writes. Import an existing campaign using
 `advertiser_id/campaign_id`, for example:
 
 ```sh
 terraform import tiktok_campaign.example '1234567890123456789/9876543210987654321'
 ```
 
-Both resource types support the same import identity format. Import and refresh
+All six resource types support the same import identity format. Import and refresh
 still need API credentials. Inventory's `resources_json` contains raw API objects
 and may contain overlapping regular/Smart+ results. Protect Terraform state and
 saved plans as account data.
 
 ## Lifecycle and limitations
 
-- Writes and deletion default to disabled. New campaigns require explicit
+- Writes and deletion default to disabled. New resources require explicit
   `operation_status = "DISABLE"`; enabling is a separate apply.
-- Omitted fields are unmanaged. Removing a field does not reset it remotely.
-- Immutable changes and missing/deleted campaigns fail instead of silently
-  replacing or recreating campaigns. Reach & Frequency creation is unsupported.
+- Omitted top-level fields and optional nested object fields are unmanaged.
+  Removing a field does not reset it remotely. Lists are owned as complete ordered
+  values: changing a list can remove entries. Smart+ creative updates reuse
+  material IDs when an unchanged creative can be matched.
+- Regular ad/ad-group settings updates replace fields. The provider carries forward
+  readable, writable settings, including omitted ones. It cannot preserve settings
+  that TikTok does not return; review these updates in an isolated advertiser first.
+  Smart+ nested replacement objects similarly retain readable omitted settings.
+- Smart+ ad-group bid changes that would affect nondeleted siblings are blocked.
+  Parents and creation-only fields cannot be changed through automatic replacement.
+- Immutable changes and missing/deleted resources fail instead of silently
+  replacing or recreating resources. Reach & Frequency creation is unsupported.
 - Pause is applied before settings; enable follows successful settings read-back.
   The provider checks drift before updates and verifies resulting values.
 - Deletion checks all four child collections, including unmanaged children.
   Use Terraform `prevent_destroy` for an additional configuration guard.
 - Writes are not retried. Partial failures preserve observed state. Ambiguous
   creates return a blocking `pending-...` identity: inspect TikTok and import the
-  verified campaign before retrying. A process killed before Terraform persists
+  verified object before retrying. A process killed before Terraform persists
   its response can still lose that identity; there is no durable write journal.
 - TikTok has no atomic compare-and-swap for these operations; other writers can
   race between a check and a write. Account eligibility and permissions also
@@ -126,7 +140,8 @@ bash build.sh
 Acceptance tests run real Terraform against local HTTP fixtures and do not need
 TikTok credentials or mutate live ads. The production provider has no API-host
 override. Tests cover both campaign families, import, drift, lifecycle sequencing,
-validation, isolation, pagination, and recovery from partial failures.
+validation, isolation, pagination, and recovery from partial failures. See
+[testing](docs/testing.md) for the standard HashiCorp workflow and test limitations.
 
 Contributions should include a fixture regression test for behavior changes.
 Run the commands above before opening a pull request. Never include tokens,
