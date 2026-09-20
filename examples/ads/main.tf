@@ -3,7 +3,7 @@ terraform {
   required_providers {
     tiktok = {
       source  = "singingbuddy/tiktok"
-      version = "0.2.0"
+      version = "0.3.0"
     }
   }
 }

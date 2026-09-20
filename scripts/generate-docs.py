@@ -13,7 +13,6 @@ def type_name(p):
         return 'list(' + type_name(p['items']) + ')'
     return p['type']
 
-queries = read('queries.json')['operations']
 objects = read('objects.json')
 campaigns = read('campaigns.json')
 kinds = ['campaign', 'smart_plus_campaign', 'adgroup', 'smart_plus_adgroup', 'ad', 'smart_plus_ad']
@@ -42,14 +41,13 @@ for kind in kinds:
     text += '\nSee [lifecycle limitations](../../README.md#lifecycle-and-limitations) before applying changes.\n'
     (ROOT / 'docs/resources' / (kind + '.md')).write_text(text)
 text = '# API coverage\n\n'
-text += f'This release has **6 managed resource types** and **{len(queries)} allowlisted read-only query operations**, plus the fully paginated six-collection inventory. It does **not** cover the entire TikTok API.\n\n'
-text += 'The table audits the 379-operation MCP snapshot retrieved on 2026-09-20. That snapshot is not a complete OpenAPI response specification or a guarantee of all TikTok endpoints. Routes for generic queries are checked against the pinned official SDK in [spec/routes.json](../spec/routes.json).\n\n'
-text += '“Resource” means the operation participates in a managed lifecycle. “Query” means one GET request through `tiktok_query`, with explicit parameters and pagination. “Not implemented” means no provider execution support; having a schema in the snapshot does not implement it.\n\n'
+text += 'This release has **6 managed resource types**, plus the fully paginated six-collection inventory. It does **not** cover the entire TikTok API.\n\n'
+text += 'The table audits the 379-operation MCP snapshot retrieved on 2026-09-20. That snapshot is not a complete OpenAPI response specification or a guarantee of all TikTok endpoints.\n\n'
+text += '“Resource” means the operation participates in a managed lifecycle. “Not implemented” means no provider execution support; having a schema in the snapshot does not implement it.\n\n'
 text += 'Unimplemented areas include persistent catalog/audience/pixel/Business Center writes as well as one-off payments, messages, event delivery, and media uploads. These need separate lifecycle designs and response-contract verification; they are not hidden behind a generic write escape hatch.\n\n'
-text += '| Operation | Support | Query route |\n| --- | --- | --- |\n'
+text += '| Operation | Support |\n| --- | --- |\n'
 for op in sorted(read('spec/catalog.json')['operations'], key=lambda o:o['name']):
     n=op['name']; support=[]
     if n in managed: support.append('Resource')
-    if n in queries: support.append('Query')
-    text += f'| `{n}` | {", ".join(support) or "Not implemented"} | ' + ('`'+queries[n]['path']+'`' if n in queries else '—') + ' |\n'
+    text += f'| `{n}` | {", ".join(support) or "Not implemented"} |\n'
 (ROOT / 'docs/coverage.md').write_text(text)

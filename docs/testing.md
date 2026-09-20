@@ -19,7 +19,7 @@ Acceptance tests check create/update plans, state values, import equivalence,
 refresh/drift reconciliation, dependency references, and destroy cleanup. Terraform
 also checks that each applied configuration leaves an empty plan. Local HTTP
 fixtures exercise JSON envelopes and replacement semantics against the pinned
-request schemas. Table-driven tests cover every allowlisted read-only query.
+request schemas.
 Failure tests cover stale plans, partial writes, ambiguous create responses,
 missing/deleted objects, account isolation, ownership removal, protected deletion,
 and children preventing parent deletion.

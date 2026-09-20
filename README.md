@@ -12,14 +12,13 @@ needed at runtime. This project is not affiliated with or endorsed by TikTok.
 | `tiktok_smart_plus_campaign` | Manage Upgraded Smart+ campaigns |
 | `tiktok_adgroup` / `tiktok_ad` | Manage regular auction ad groups and individual ads |
 | `tiktok_smart_plus_adgroup` / `tiktok_smart_plus_ad` | Manage Upgraded Smart+ ad groups and ads |
-| `tiktok_query` | Read 104 verified GET operations: account info, assets, targeting, audiences, catalogs, reporting, and more |
 | `tiktok_inventory` | Read regular and Smart+ campaigns, ad groups, and ads |
 
 Fields are native HCL attributes, including nested targeting and creative objects.
 See the [complete coverage matrix](docs/coverage.md), [resource references](docs/resources),
-and [read-only query examples](docs/data-sources/query.md). Request contracts are
+and the inventory data source. Request contracts are
 pinned in `campaigns.json` and `objects.json`; provenance is retained in `spec/`.
-These are MCP input schemas plus verified SDK routes, not a complete OpenAPI response
+These are MCP input schemas, not a complete OpenAPI response
 contract. Not all TikTok endpoints or conditional business rules are implemented.
 
 ## Install from Git
@@ -28,7 +27,7 @@ Requires Go 1.27.1 and Terraform 1.14 or newer (below 2.0). A C compiler is need
 for race-enabled development tests, but not for the provider build.
 
 ```sh
-git clone --branch v0.2.0 https://github.com/kishansripada/terraform-provider-tiktok.git
+git clone --branch v0.3.0 https://github.com/kishansripada/terraform-provider-tiktok.git
 cd terraform-provider-tiktok
 bash build.sh
 export TF_CLI_CONFIG_FILE="$PWD/.terraform/install.tfrc"
@@ -46,7 +45,7 @@ To pin it inside another Git project:
 
 ```sh
 git submodule add https://github.com/kishansripada/terraform-provider-tiktok.git vendor/terraform-provider-tiktok
-git -C vendor/terraform-provider-tiktok checkout v0.2.0
+git -C vendor/terraform-provider-tiktok checkout v0.3.0
 git add .gitmodules vendor/terraform-provider-tiktok
 bash vendor/terraform-provider-tiktok/build.sh
 export TF_CLI_CONFIG_FILE="$PWD/vendor/terraform-provider-tiktok/.terraform/install.tfrc"
@@ -70,7 +69,7 @@ terraform {
   required_providers {
     tiktok = {
       source  = "singingbuddy/tiktok"
-      version = "0.2.0"
+      version = "0.3.0"
     }
   }
 }
