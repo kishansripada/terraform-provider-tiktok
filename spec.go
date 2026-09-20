@@ -21,10 +21,12 @@ import (
 var specification []byte
 
 type property struct {
-	Type        string    `json:"type"`
-	Description string    `json:"description"`
-	Enum        []string  `json:"enum"`
-	Items       *property `json:"items"`
+	Type        string              `json:"type"`
+	Description string              `json:"description"`
+	Enum        []any               `json:"enum"`
+	Items       *property           `json:"items"`
+	Properties  map[string]property `json:"properties"`
+	Required    []string            `json:"required"`
 }
 type operation struct {
 	Properties map[string]property `json:"properties"`
@@ -89,8 +91,31 @@ func validateValue(p property, value any) error {
 		_, valid = value.(string)
 	case "boolean":
 		_, valid = value.(bool)
-	case "number":
-		_, valid = value.(float64)
+	case "number", "integer":
+		n, ok := value.(float64)
+		valid = ok && (p.Type != "integer" || n == float64(int64(n)))
+	case "object":
+		m, ok := value.(map[string]any)
+		valid = ok
+		if ok {
+			for _, key := range p.Required {
+				if m[key] == nil {
+					return fmt.Errorf("%s is required", key)
+				}
+			}
+			for k, v := range m {
+				if v == nil {
+					continue
+				}
+				child, found := p.Properties[k]
+				if !found {
+					return fmt.Errorf("unknown nested attribute %s", k)
+				}
+				if err := validateValue(child, v); err != nil {
+					return fmt.Errorf("%s: %w", k, err)
+				}
+			}
+		}
 	case "array":
 		items, ok := value.([]any)
 		valid = ok
@@ -105,7 +130,7 @@ func validateValue(p property, value any) error {
 	}
 	if len(p.Enum) > 0 {
 		for _, option := range p.Enum {
-			if value == option {
+			if reflect.DeepEqual(value, option) {
 				return nil
 			}
 		}
@@ -253,6 +278,23 @@ func valueGo(v tftypes.Value) (any, error) {
 		err := v.As(&n)
 		value, _ := n.Float64()
 		return value, err
+	case isObject(v.Type()):
+		var values map[string]tftypes.Value
+		if err := v.As(&values); err != nil {
+			return nil, err
+		}
+		result := map[string]any{}
+		for key, item := range values {
+			if item.IsNull() {
+				continue
+			}
+			x, err := valueGo(item)
+			if err != nil {
+				return nil, err
+			}
+			result[key] = x
+		}
+		return result, nil
 	default:
 		var list []tftypes.Value
 		if err := v.As(&list); err != nil {
@@ -278,3 +320,5 @@ func managed(kind string, values map[string]any) map[string]any {
 	}
 	return result
 }
+
+func isObject(t tftypes.Type) bool { _, ok := t.(tftypes.Object); return ok }

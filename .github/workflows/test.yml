@@ -22,7 +22,8 @@ jobs:
           terraform_wrapper: false
       - run: test -z "$(gofmt -l .)"
       - run: go vet ./...
-      - run: go test -race ./...
+      - run: go test ./...
+      - run: go test -race -coverprofile=coverage.out ./...
         env:
           TF_ACC: '1'
       - run: bash build.sh
@@ -33,3 +34,10 @@ jobs:
       - run: terraform -chdir=examples/basic validate
         env:
           TF_CLI_CONFIG_FILE: ${{ github.workspace }}/.terraform/install.tfrc
+      - run: terraform -chdir=examples/ads init -backend=false -input=false
+        env:
+          TF_CLI_CONFIG_FILE: ${{ github.workspace }}/.terraform/install.tfrc
+      - run: terraform -chdir=examples/ads validate
+        env:
+          TF_CLI_CONFIG_FILE: ${{ github.workspace }}/.terraform/install.tfrc
+      - run: python3 scripts/generate-docs.py && git diff --exit-code -- docs
